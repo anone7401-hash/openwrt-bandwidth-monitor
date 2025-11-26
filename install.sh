@@ -413,6 +413,9 @@ EOFHTML
 
 chmod 644 /www/bandwidth-monitor/index.html
 
+# 7. Info selesai
+IP_LAN=$(uci get network.lan.ipaddr 2>/dev/null || echo "192.168.1.1")
+
 echo ""
 echo "╔════════════════════════════════════════════════════════════╗"
 echo "║                                                            ║"
