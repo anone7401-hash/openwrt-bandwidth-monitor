@@ -62,7 +62,7 @@ Jika mengalami masalah instalasi, pastikan:
 - Anda memiliki akses root/admin di router
 - Port yang diperlukan tidak terblokir oleh firewall
 
-Jika masih eror silahkan PM : 085654929596
+Jika masih eror silahkan lihat di telegram untuk memperbaiki: https://t.me/bandwithmonitor
 
 ## Kontribusi
 
