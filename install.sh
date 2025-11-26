@@ -413,8 +413,6 @@ cat > /www/bandwidth-monitor/index.html << 'EOFHTML'
 
 EOFHTML
 
-# 5. Set permission executable
-chmod +x /www/cgi-bin/bandwidth-api
 
 # 6.api 
 cat > /www/cgi-bin/bandwidth-api << 'EOFAPI'
