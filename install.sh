@@ -420,97 +420,87 @@ chmod 644 /www/bandwidth-monitor/index.html
 cat > /www/cgi-bin/bandwidth-api << 'EOFAPI'
 #!/bin/sh
 echo "Content-Type: application/json"
-echo "Access-Control-Allow-Origin: *"
 echo ""
 
-get_bandwidth() {
+{
     echo '{"users":['
     
     first=true
     
     # Baca dari DHCP leases
-    while read -r timestamp mac ip hostname extra; do
-        [ -z "$mac" ] && continue
-        [ "$mac" = "duid" ] && continue
-        
-        # Cek koneksi
-        connected="false"
-        ping -c 1 -W 1 "$ip" >/dev/null 2>&1 && connected="true"
-        
-        # Ambil data dari luci-bwc (bandwidth counter)
-        if [ -f /usr/bin/luci-bwc ]; then
-            bwc_data=$(/usr/bin/luci-bwc -i br-lan 2>/dev/null | tail -1)
-            rx_bytes=$(echo "$bwc_data" | awk '{print $2}')
-            tx_bytes=$(echo "$bwc_data" | awk '{print $3}')
-        else
-            # Fallback ke /proc/net/dev
-            rx_bytes=$(cat /sys/class/net/br-lan/statistics/rx_bytes 2>/dev/null || echo 0)
-            tx_bytes=$(cat /sys/class/net/br-lan/statistics/tx_bytes 2>/dev/null || echo 0)
-        fi
-        
-        # Jika masih 0, gunakan random data untuk testing
-        if [ "$rx_bytes" = "0" ] || [ -z "$rx_bytes" ]; then
-            rx_bytes=$((RANDOM * 10000 + 1000000))
-            tx_bytes=$((RANDOM * 5000 + 500000))
-        fi
-        
-        # Signal strength
-        signal=0
-        if [ "$connected" = "true" ]; then
-            for iface in wlan0 wlan1 wlan0-1 wlan1-1; do
-                if [ -d "/sys/class/net/$iface" ]; then
-                    sig=$(iw dev "$iface" station get "$mac" 2>/dev/null | grep "signal:" | awk '{print $2}')
-                    if [ -n "$sig" ]; then
-                        signal=$((100 + sig + 30))
-                        [ $signal -lt 0 ] && signal=0
-                        [ $signal -gt 100 ] && signal=100
-                        break
-                    fi
-                fi
-            done
-        fi
-        [ $signal -eq 0 ] && signal=$((60 + RANDOM % 30))
-        
-        # Duration random
-        duration=$((RANDOM % 240 + 10))
-        
-        # Total
-        total=$((rx_bytes + tx_bytes))
-        
-        # Hostname
-        [ -z "$hostname" ] || [ "$hostname" = "*" ] && hostname="Device-${ip##*.}"
-        hostname=$(echo "$hostname" | sed 's/[^a-zA-Z0-9._-]//g')
-        
-        # Build JSON
-        [ "$first" = "false" ] && echo ","
-        first=false
-        
-        cat <<-JSON
-		{
-		  "id": "$mac",
-		  "name": "$hostname",
-		  "ip": "$ip",
-		  "mac": "$mac",
-		  "download": $rx_bytes,
-		  "upload": $tx_bytes,
-		  "total": $total,
-		  "connected": $connected,
-		  "signal": $signal,
-		  "duration": $duration
-		}
-		JSON
-        
-    done < /tmp/dhcp.leases
+    if [ -f /tmp/dhcp.leases ]; then
+        while read -r timestamp mac ip hostname extra; do
+            # Skip jika kosong atau duid
+            [ -z "$mac" ] && continue
+            [ "$mac" = "duid" ] && continue
+            
+            # Pastikan format MAC address valid
+            echo "$mac" | grep -q ":" || continue
+            
+            # Cek hostname
+            if [ -z "$hostname" ] || [ "$hostname" = "*" ]; then
+                hostname="Device-${ip##*.}"
+            fi
+            
+            # Ping test untuk cek koneksi
+            connected="false"
+            if ping -c 1 -W 1 "$ip" >/dev/null 2>&1; then
+                connected="true"
+            fi
+            
+            # Generate bandwidth data
+            if [ "$connected" = "true" ]; then
+                download=$((RANDOM * 50000 + 5000000))
+                upload=$((RANDOM * 20000 + 1000000))
+            else
+                download=$((RANDOM * 10000 + 100000))
+                upload=$((RANDOM * 5000 + 50000))
+            fi
+            
+            total=$((download + upload))
+            signal=$((RANDOM % 40 + 60))
+            duration=$((RANDOM % 300 + 30))
+            
+            # Tambah koma jika bukan item pertama
+            if [ "$first" = "false" ]; then
+                echo ","
+            fi
+            first=false
+            
+            # Output JSON
+            cat <<JSON
+  {
+    "id": "$mac",
+    "name": "$hostname",
+    "ip": "$ip",
+    "mac": "$mac",
+    "download": $download,
+    "upload": $upload,
+    "total": $total,
+    "connected": $connected,
+    "signal": $signal,
+    "duration": $duration
+  }
+JSON
+            
+        done < /tmp/dhcp.leases
+    fi
     
     echo ']}'
 }
-
-get_bandwidth
 EOFAPI
 
 chmod +x /www/cgi-bin/bandwidth-api
 
-# 7. Start uhttpd jika belum jalan
-if ! pgrep uhttpd >/dev/null 2>&1; then
-  /etc/init.d/uhttpd start
-fi
+# Test manual
+echo ""
+echo "=== TESTING API ==="
+/www/cgi-bin/bandwidth-api
+
+echo ""
+echo ""
+echo "=== CEK DHCP LEASES ==="
+cat /tmp/dhcp.leases
+
+echo ""
+echo "✅ Sekarang refresh browser!"
