@@ -3,9 +3,7 @@
 # Install Bandwidth Monitor OpenWrt (Frontend + Backend)
 # ===================================================
 
-# 1. Hapus install lama
-rm -rf /www/bandwidth-monitor
-rm -f /www/cgi-bin/bandwidth-api
+
 
 # 2. Buat folder frontend
 mkdir -p /www/bandwidth-monitor
