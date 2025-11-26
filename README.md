@@ -44,7 +44,7 @@ Gunakan command berikut untuk melakukan instalasi otomatis:
 sh <(curl -s https://raw.githubusercontent.com/anone7401-hash/openwrt-bandwidth-monitor/main/install.sh)
 ```
 
-Setelah instalasi selesai, akses dashboard melalui OpenWrt Dashboard Anda di `192.168.1.1` (atau IP router Anda).
+Setelah instalasi selesai, akses dashboard melalui OpenWrt Dashboard Anda di `http://192.168.1.1/bandwidth-monitor/)` (atau IP router Anda)/bandwidth-monitor/
 
 ## Requirements
 
