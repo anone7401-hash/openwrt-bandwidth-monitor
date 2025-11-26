@@ -1,3 +1,4 @@
+cat > /www/bandwidth-monitor/index.html << 'EOFHTML'
 <!DOCTYPE html>
 
 <html lang="en">
@@ -396,3 +397,4 @@
 
 </body>
 </html>
+EOFHTML
