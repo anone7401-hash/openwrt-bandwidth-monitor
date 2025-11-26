@@ -53,12 +53,6 @@ Setelah instalasi selesai, akses dashboard melalui OpenWrt Dashboard Anda di `ht
 - curl atau wget
 - Koneksi internet untuk menjalankan installer
 
-## Penggunaan
-
-1. Buka OpenWrt Dashboard di browser Anda
-1. Cari aplikasi “Bandwidth Monitor”
-1. Klik untuk membuka dashboard monitoring
-1. Monitor penggunaan bandwidth real-time dari semua perangkat Anda
 
 ## Troubleshooting
 
