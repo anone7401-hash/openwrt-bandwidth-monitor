@@ -62,6 +62,8 @@ Jika mengalami masalah instalasi, pastikan:
 - Anda memiliki akses root/admin di router
 - Port yang diperlukan tidak terblokir oleh firewall
 
+Jika masih eror silahkan PM : 085654929596
+
 ## Kontribusi
 
 Kontribusi sangat diterima! Silakan fork repository dan buat pull request untuk improvement.
