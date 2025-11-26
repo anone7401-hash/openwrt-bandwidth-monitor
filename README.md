@@ -72,9 +72,7 @@ Jika mengalami masalah instalasi, pastikan:
 
 Kontribusi sangat diterima! Silakan fork repository dan buat pull request untuk improvement.
 
-## Lisensi
 
-Lihat file LICENSE untuk detail lebih lanjut.
 
 -----
 
